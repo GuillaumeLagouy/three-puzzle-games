@@ -13,6 +13,7 @@ import faceOrangeImg from './faces/face-orange.png';
 import facePurpleImg from './faces/face-purple.png';
 import faceRedImg from './faces/face-red.png';
 import faceYellowImg from './faces/face-yellow.png';
+import faceBottom from './faces/face_bottom.png';
 
 import buckinghamPicture from './pictures/buckingham.png';
 import greecePicture from './pictures/greece.png';
@@ -147,7 +148,7 @@ houseGroup.add(wallTopPivot);
 
 //===================================================
 
-const wallBottomMat = new THREE.MeshStandardMaterial({map: new THREE.TextureLoader().load('faces/face_bottom.png'), side: THREE.DoubleSide});
+const wallBottomMat = new THREE.MeshStandardMaterial({map: new THREE.TextureLoader().load(faceBottom), side: THREE.DoubleSide});
 const wallBottom = new THREE.Mesh(wallGeo, wallBottomMat);
 wallBottom.position.y = -houseSize/2;
 wallBottom.rotation.x = 90 * Math.PI / 180;
