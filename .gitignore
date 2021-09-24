@@ -1,0 +1,13 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+
+.editorconfig
+.firebase/
+.idea/
+.vscode/
+.src/views/Test.vue
+jsconfig.json
+.cache/
