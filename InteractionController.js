@@ -151,14 +151,14 @@ export default class {
     onMouseUp(evt) {
         evt.preventDefault();
 
-        this.mouseDown = false;  
-        
-        this.checkPictureHit();
-
+        this.mouseDown = false;
+        console.log(this.hasClick);
         if(this.hasClick) {
             this.checkHouseHit();
             this.hasClick = false;
         }
+
+        this.checkPictureHit();
     }
 
     checkHouseHit() {
@@ -171,7 +171,7 @@ export default class {
         raycaster.setFromCamera(mouse, this.camera);
 
         const intersects = raycaster.intersectObjects(this.scene.children, true);
-        
+
         if(intersects.length > 0)
         {
             if(intersects[0].object.name.startsWith('face')) {
