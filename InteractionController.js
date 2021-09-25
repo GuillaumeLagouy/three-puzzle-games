@@ -152,7 +152,7 @@ export default class {
         evt.preventDefault();
 
         this.mouseDown = false;
-        console.log(this.hasClick);
+        
         if(this.hasClick) {
             this.checkHouseHit();
             this.hasClick = false;
