@@ -15,10 +15,10 @@ import faceRedImg from './faces/face-red.png';
 import faceYellowImg from './faces/face-yellow.png';
 import faceBottom from './faces/face_bottom.png';
 
-import buckinghamPicture from './pictures/buckingham.png';
-import greecePicture from './pictures/greece.png';
-import operaPicture from './pictures/opera.png';
-import romePicture from './pictures/rome.png';
+import bigbenPicture from './pictures/bigben.png';
+import petraPicture from './pictures/petra.png';
+import rialtoPicture from './pictures/rialto.png';
+import goldenGatePicture from './pictures/goldenGate.png';
 
 import roofModel from './roof.glb';
 
@@ -133,10 +133,10 @@ houseGroup.add(wallRightPivot);
 
 //===================================================
 
-const wallTopMat = new THREE.MeshStandardMaterial({map: facesTexture.orange, side: THREE.DoubleSide});
+const wallTopMat = new THREE.MeshStandardMaterial({map: facesTexture.purple, side: THREE.DoubleSide});
 const wallTop = new THREE.Mesh(wallGeo, wallTopMat);
 wallTop.position.y = houseSize/2;
-wallTop.name = 'face-orange';
+wallTop.name = 'face-purple';
 
 const wallTopPivot = new THREE.Group();
 wallTopPivot.position.y = houseSize/2;
@@ -168,10 +168,10 @@ const table = new THREE.Mesh(tableGeo, tableMat);
 table.name = 'table'; 
 tableGroup.add(table);
 
-const picture1 = new Picture(1, 1.2, 0.8, {x: -1.3, y: -0.3, z: 0.01}, 5, greecePicture);
-const picture2 = new Picture(2, 1.2, 0.8, {x: -0.5, y: 0.1, z: 0.015}, -3, operaPicture);
-const picture3 = new Picture(3, 1.2, 0.8, {x: 0.4, y: 0.3, z: 0.01}, 2, romePicture);
-const picture4 = new Picture(4, 1.2, 0.8, {x: 1., y: -0.2, z: 0.015}, 9, buckinghamPicture);
+const picture1 = new Picture(1, 1.2, 0.8, {x: -1., y: -0.5, z: 0.01}, 5, goldenGatePicture);
+const picture2 = new Picture(2, 1.2, 0.8, {x: -0.5, y: 0.1, z: 0.015}, -3, petraPicture);
+const picture3 = new Picture(3, 1.2, 0.8, {x: 0.4, y: 0.3, z: 0.01}, 2, rialtoPicture);
+const picture4 = new Picture(4, 1.2, 0.8, {x: 1., y: -0.2, z: 0.015}, 87, bigbenPicture);
 tableGroup.add(picture1, picture2, picture3, picture4);
 
 
@@ -185,7 +185,7 @@ scene.add(tableGroup);
 const interactionController = new InteractionController(renderer.domElement, houseGroup, camera, scene);
 interactionController.initListener();
 
-const goodCombination = ['face-red', 'face-green', 'face-orange', 'face-blue']
+const goodCombination = ['face-red', 'face-green', 'face-purple', 'face-blue']
 let currentCombination = [];
 
 let currentHighlight = [];
@@ -207,7 +207,7 @@ const isGoodCombination = () => {
 }
 
 const playOpeningAnimation = () => {
-    const faceToRemove = scene.getObjectByName('face-orange');
+    const faceToRemove = scene.getObjectByName('face-purple');
     faceToRemove.parent.remove(faceToRemove);
 
     const roof = scene.getObjectByName('roof');
@@ -261,12 +261,13 @@ document.addEventListener('hitFace', e => {
         highlightClone.position.x = 0.01;
     }
 
-    e.detail.parent.add(highlightClone);
+    if(e.detail.name != 'face-bottom') {
+        e.detail.parent.add(highlightClone);
+    }
     
     currentHighlight.push(e.detail.parent);
 
     if(isGoodCombination()){
-        console.log('good combination');
         playOpeningAnimation();
     }
 
@@ -280,11 +281,15 @@ document.addEventListener('hitFace', e => {
     }
 });
 
+let canMoveRoof = true;
 document.addEventListener('hitRoof', e => {
+    if(!canMoveRoof) return;
     const tl = gsap.timeline({repeat: 0});
     tl.to(e.detail.position, {
         y: houseSize + 0.5, 
-        duration: 0.6
+        duration: 0.6, 
+        onStart: () => {canMoveRoof = false},
+        onComplete: () => {canMoveRoof = true}
     }, 0);
     tl.to(e.detail.rotation, {
         y: `+=${90 * Math.PI/180}`, 
