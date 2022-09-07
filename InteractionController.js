@@ -86,7 +86,7 @@ export default class {
             if(
                 intersects[i].object.name &&
                 intersects[i].object.parent.parent.name === 'house' || 
-                intersects[i].object.parent.name === 'house') 
+                intersects[i].object.parent.name === 'house')
             {
                 this.mouseDown = true;
                 this.hasClick = true;
@@ -140,7 +140,9 @@ export default class {
             if(
                 intersects[i].object.name &&
                 intersects[i].object.parent.parent.name === 'house' || 
-                intersects[i].object.parent.name === 'house')
+                intersects[i].object.parent.name === 'house'||
+                intersects[i].object.parent.parent.name === 'locker' || 
+                intersects[i].object.parent.name === 'locker')
             {
                 this.mouseDown = true;
                 this.hasClick = true;
@@ -158,6 +160,8 @@ export default class {
             this.hasClick = false;
         }
 
+        this.checkLockerWheelHit();
+        this.checkLockerButtonHit();
         this.checkPictureHit();
     }
 
@@ -194,6 +198,28 @@ export default class {
         if(intersects.length > 0 && intersects[0].object.name.startsWith('picture')) {
             const hitPictureEvent = new CustomEvent('hitPicture', {detail: intersects[0].object});
             document.dispatchEvent(hitPictureEvent);
+        }
+    }
+
+    checkLockerWheelHit() {
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(this.getMouse(), this.camera);
+
+        const intersects = raycaster.intersectObjects(this.scene.children, true);
+        if(intersects.length > 0 && intersects[0].object.name.startsWith('Cylinder')) {
+            const hitWheelEvent = new CustomEvent('hitWheel', {detail: intersects[0].object});
+            document.dispatchEvent(hitWheelEvent);
+        }
+    }
+
+    checkLockerButtonHit() {
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(this.getMouse(), this.camera);
+
+        const intersects = raycaster.intersectObjects(this.scene.children, true);
+        if(intersects.length > 0 && intersects[0].object.name === 'ResetBtn') {
+            const hitBtnEvent = new CustomEvent('hitBtn', {detail: intersects[0].object});
+            document.dispatchEvent(hitBtnEvent);
         }
     }
 

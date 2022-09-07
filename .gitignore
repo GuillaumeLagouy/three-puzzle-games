@@ -11,3 +11,4 @@ dist-ssr
 .src/views/Test.vue
 jsconfig.json
 .cache/
+.parcel-cache/

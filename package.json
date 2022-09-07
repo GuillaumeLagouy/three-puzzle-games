@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "source": "index.html",
   "scripts": {
+    "start": "parcel",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "parcel build index.html"
   },
@@ -15,6 +17,7 @@
     "three": "^0.132.2"
   },
   "devDependencies": {
+    "parcel": "^2.6.2",
     "parcel-bundler": "^1.12.5"
   }
 }

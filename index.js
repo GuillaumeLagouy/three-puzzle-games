@@ -21,6 +21,9 @@ import rialtoPicture from './pictures/rialto.png';
 import goldenGatePicture from './pictures/goldenGate.png';
 
 import roofModel from './roof.glb';
+import lockerModel from './locker.glb';
+
+import smiley from './smiley.png';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -158,7 +161,19 @@ houseGroup.add(wallBottom);
 //===================================================
 
 houseGroup.position.z = 1.;
-scene.add(houseGroup);
+//scene.add(houseGroup);
+
+/*
+const lockerGroup = new THREE.Group();
+lockerGroup.name = "locker";
+
+gltfLoader.load(lockerModel, glb => {
+    const model = glb.scene;
+    model.scale.set(0.6, 0.6, 0.6);
+    lockerGroup.add(model);
+})
+scene.add(lockerGroup);
+*/
 
 const tableGroup = new THREE.Group();
 
@@ -181,8 +196,44 @@ scene.add(tableGroup);
 
 //const controls = new OrbitControls(camera, renderer.domElement );
 
+const paperGroup = new THREE.Group();
+paperGroup.name = "house";
+const paperMat = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF, 
+    side: THREE.DoubleSide,
+})
+const paperBlueMat = new THREE.MeshBasicMaterial({
+	color: 0x0000FF,
+	side: THREE.DoubleSide,
+});
+
+const middlePieceShape = new THREE.Shape();
+middlePieceShape
+	.moveTo(0, 1)
+	.lineTo(1, 0)
+	.lineTo(1, -0.5)
+	.lineTo(-1, -0.5)
+	.lineTo(-1, 0)
+	.lineTo(0, 1);
+const middlePieceGeo = new THREE.ShapeGeometry(middlePieceShape);
+const middlePiece = new THREE.Mesh(middlePieceGeo, paperMat);
+paperGroup.add(middlePiece);
+
+const bottomPieceGeo = new THREE.PlaneGeometry(2, 0.5);
+const bottomPiece = new THREE.Mesh(bottomPieceGeo, paperBlueMat);
+const bottomPieceGroup = new THREE.Group();
+bottomPieceGroup.position.x = 0;
+bottomPieceGroup.position.y = -0.5;
+bottomPieceGroup.rotation.x = (-179 * Math.PI) / 180;
+bottomPieceGroup.add(bottomPiece);
+bottomPiece.position.y = -0.25;
+paperGroup.add(bottomPieceGroup);
+
+scene.add(paperGroup);
+
 // TODO Pouvoir passer un tableau d'objet avec lesquels on peut intéragir
-const interactionController = new InteractionController(renderer.domElement, houseGroup, camera, scene);
+const interactionController = new InteractionController(renderer.domElement, paperGroup, camera, scene);
+
 interactionController.initListener();
 
 const goodCombination = ['face-red', 'face-green', 'face-purple', 'face-blue']
@@ -324,6 +375,46 @@ document.addEventListener('hitPicture', e => {
             x: 0
         }, 0)
     }
+})
+
+let canMoveWheel = true;
+let wheelPosition = [0, 0, 0, 0];
+document.addEventListener('hitWheel', e => {
+    if (!canMoveWheel) return;
+
+    const tl = gsap.timeline({repeat: 0});
+    tl.to(e.detail.rotation, {
+        y: `+=${36 * Math.PI/180}`,
+        duration: 0.2,
+        ease: "back.out(1.2)",
+        onStart: () => {canMoveWheel = false},
+        onComplete: () => {
+            canMoveWheel = true;
+            const wheelNb = e.detail.name[e.detail.name.length - 1] - 1;
+            wheelPosition[wheelNb] === 9 ? wheelPosition[wheelNb] = 0 : wheelPosition[wheelNb] += 1;
+            console.log(wheelPosition);
+        }
+    })
+    
+});
+
+document.addEventListener('hitBtn', e => {
+    const tl = gsap.timeline({repeat: 0});
+    const cylinders = [];
+    for (let i = 1; i <= 4; i++) {
+        cylinders.push(scene.getObjectByName("Cylinder" + i));  
+    }
+    for (const cylinder of cylinders) {
+        tl.to(cylinder.rotation, {
+            y: 0,
+            duration: 0.2,
+            ease: "back.out(1.2)",
+            onComplete: () => {
+                wheelPosition = [0, 0, 0, 0];
+            }
+        }, 0)
+    }
+
 })
 
 const animate = function () {
